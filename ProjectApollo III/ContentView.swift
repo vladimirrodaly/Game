@@ -15,6 +15,10 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         scene?.size = CGSize(width: 750, height: 1335)
     }
+    
+    override func update(_ currentTime: TimeInterval) {
+        //Just wait and see
+    }
 }
 
 struct ContentView: View {
