@@ -11,6 +11,7 @@
 		1DF720C62AF1AE0400CEFE80 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DF720C52AF1AE0400CEFE80 /* ContentView.swift */; };
 		1DF720C82AF1AE0500CEFE80 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DF720C72AF1AE0500CEFE80 /* Assets.xcassets */; };
 		1DF720CB2AF1AE0500CEFE80 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DF720CA2AF1AE0500CEFE80 /* Preview Assets.xcassets */; };
+		645BD21A2AFD878400DEFB84 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 645BD2192AFD878400DEFB84 /* GameViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +20,7 @@
 		1DF720C52AF1AE0400CEFE80 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		1DF720C72AF1AE0500CEFE80 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1DF720CA2AF1AE0500CEFE80 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		645BD2192AFD878400DEFB84 /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +55,7 @@
 			children = (
 				1DF720C32AF1AE0400CEFE80 /* ProjectApollo_IIIApp.swift */,
 				1DF720C52AF1AE0400CEFE80 /* ContentView.swift */,
+				645BD2192AFD878400DEFB84 /* GameViewModel.swift */,
 				1DF720C72AF1AE0500CEFE80 /* Assets.xcassets */,
 				1DF720C92AF1AE0500CEFE80 /* Preview Content */,
 			);
@@ -137,6 +140,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				645BD21A2AFD878400DEFB84 /* GameViewModel.swift in Sources */,
 				1DF720C62AF1AE0400CEFE80 /* ContentView.swift in Sources */,
 				1DF720C42AF1AE0400CEFE80 /* ProjectApollo_IIIApp.swift in Sources */,
 			);
@@ -277,7 +281,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -305,7 +309,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

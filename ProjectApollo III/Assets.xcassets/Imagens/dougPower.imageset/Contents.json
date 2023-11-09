@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Idle-removebg-preview-3.png",
+      "filename" : "dougPower.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "dougPower@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "dougPower@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
