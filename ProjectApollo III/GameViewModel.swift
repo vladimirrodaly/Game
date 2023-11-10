@@ -9,6 +9,7 @@ class GameScene: SKScene, ObservableObject {
     var player = SKSpriteNode()
     var enemy = SKSpriteNode()
     //var dougPower = SKSpriteNode()
+    var dougPower = SKSpriteNode()
     var playerFire = SKSpriteNode()
     var fireTimer = Timer()
     var dougTimer = Timer()
@@ -22,10 +23,11 @@ class GameScene: SKScene, ObservableObject {
         background.zPosition = 1
         addChild(background)
         makePlayer(playerCh: 1)
+        dougPowerSpawn()
         //DougPowerz()
         enemyTimer = .scheduledTimer(timeInterval: 2, target: self, selector: #selector(makeEnemy), userInfo: nil, repeats: true)
         fireTimer = .scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(playerFireFunc), userInfo: nil, repeats: true)
-        //        dougTimer = .scheduledTimer(timeInterval: 20.0, invocation: NSInvocation, repeats: true)
+        dougTimer = .scheduledTimer(timeInterval: 10, target: self, selector: #selector(dougPowerSpawn), userInfo: nil, repeats: true)
     }
     
     func makePlayer(playerCh: Int) {
@@ -44,7 +46,7 @@ class GameScene: SKScene, ObservableObject {
         player = .init(imageNamed: shipName)
         player.position = CGPoint(x: size.width / 2, y: 120)
         player.zPosition = 10
-        player.setScale(1.5)
+        player.setScale(1.1)
         addChild(player)
     }
     
@@ -56,7 +58,7 @@ class GameScene: SKScene, ObservableObject {
         playerFire = .init(imageNamed: "playerShot")
         playerFire.position = player.position
         playerFire.zPosition = 3
-        playerFire.setScale(5.0)
+        playerFire.setScale(4.5)
         addChild(playerFire)
         playerFire.run(combine)
     }
@@ -94,8 +96,37 @@ class GameScene: SKScene, ObservableObject {
     //        dougPower.setScale(1.5)
     //        addChild(dougPower)
     //    }
+    @objc func enemySpawnFunc() {
+        let moveAction = SKAction.moveTo(y: 1400, duration: 1)
+        let deleteAction = SKAction.removeFromParent()
+        let combine = SKAction.sequence([moveAction,deleteAction])
+        
+        playerFire = .init(imageNamed: "playerShot")
+        playerFire.position = player.position
+        playerFire.zPosition = 3
+        playerFire.setScale(4.5)
+        addChild(playerFire)
+        playerFire.run(combine)
+    }
+    
+    func randomPoint() -> Int {
+        return Int.random(in: 30...1400)
+    }
+    @objc func dougPowerSpawn() {
+        let moveAction = SKAction.moveTo(y: -100, duration: 5)
+        let deleteAction = SKAction.removeFromParent()
+        let combine = SKAction.sequence([moveAction,deleteAction])
+        
+        dougPower = .init(imageNamed: "dougPower")
+        dougPower.position = CGPoint(x: randomPoint() / 2, y: 1200)
+        dougPower.zPosition = 11
+        dougPower.setScale(0.20)
+        addChild(dougPower)
+        dougPower.run(moveAction)
+//        addChild(playerFire)
+//        playerFire.run(combine)
+    }
 }
-
 //        let video = SKVideoNode(fileNamed: "video")
 //        video.size = CGSize(width: 750, height: 1335)
 //        addChild(video)
