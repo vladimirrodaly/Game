@@ -5,6 +5,7 @@ import SpriteKit
 
 
 struct ContentView: View {
+    @StateObject private var gameState = GameState()
     let scene = GameScene()
     
     var body: some View {
@@ -12,12 +13,15 @@ struct ContentView: View {
             SpriteView(scene: scene)
                 .ignoresSafeArea()
             Button(action: {
-                scene.background
+                gameState.isPaused.toggle()
+                scene.isPaused = gameState.isPaused
+                scene.toggleTimers(isPaused: gameState.isPaused)
             }) {
-                Text("Clique aqui")
+                Text("Pause Button")
                     .foregroundColor(.white)
             }
-            .position(x: 150, y: 200)
+            .padding(.top, -380)
+            .padding(.leading, 250)
         }
     }
 }

@@ -1,6 +1,9 @@
 import SpriteKit
-import SwiftUI
-import GameKit
+
+
+class GameState: ObservableObject {
+    @Published var isPaused = false
+}
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -16,6 +19,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var enemyTimer = Timer()
     var enemyFireTimer = Timer()
     var gameOver = 0
+    var gameState: GameState?
     
     override func didMove(to view: SKView) {
         scene?.size = CGSize(width: 750, height: 1335)
@@ -23,15 +27,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         background.setScale(1.5)
         background.zPosition = 1
         addChild(background)
-        makePlayer(playerCh: 1)
+        makePlayer(playerCh: 2)
         //dougPowerSpawn()
-        enemyTimer = .scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(makeEnemy), userInfo: nil, repeats: true)
-        enemyFireTimer = .scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(enimyFireFunc), userInfo: nil, repeats: true)
-        fireTimer = .scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(playerFireFunc), userInfo: nil, repeats: true)
+        enemyTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(makeEnemy), userInfo: nil, repeats: true)
+        enemyFireTimer = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(enimyFireFunc), userInfo: nil, repeats: true)
+        fireTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(playerFireFunc), userInfo: nil, repeats: true)
         //   dougTimer = .scheduledTimer(timeInterval: 10, target: self, selector: #selector(dougPowerSpawn), userInfo: nil, repeats: true)
-        if playerFire.physicsBody == enemy.physicsBody {
-            //enemy.run(SKAction.removeFromParent())
-        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -121,6 +122,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.zPosition = 10
         player.setScale(1.1)
         addChild(player)
+        
+    }
+    
+    func toggleTimers(isPaused: Bool) {
+        if isPaused {
+            fireTimer.invalidate()
+            dougTimer.invalidate()
+            enemyTimer.invalidate()
+            enemyFireTimer.invalidate()
+        } else {
+            enemyTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(makeEnemy), userInfo: nil, repeats: true)
+            enemyFireTimer = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(enimyFireFunc), userInfo: nil, repeats: true)
+            fireTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(playerFireFunc), userInfo: nil, repeats: true)
+            
+        }
     }
     func didBeginContact(with contact: SKPhysicsContact) {
         // Verifica se os objetos que entraram em contato são o jogador e o inimigo
@@ -141,7 +157,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         playerFire.removeFromParent()
     }
 }
-
 extension GameScene {
     func didBegin(_ contact: SKPhysicsContact) {
         if contact.bodyA.node == playerFire && contact.bodyB.node == enemy {
@@ -149,6 +164,7 @@ extension GameScene {
         }
     }
 }
+
 //        let video = SKVideoNode(fileNamed: "video")
 //        video.size = CGSize(width: 750, height: 1335)
 //        addChild(video)
