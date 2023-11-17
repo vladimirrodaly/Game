@@ -8,7 +8,6 @@ struct ContentView: View {
     @State var displayedScene = GameScene()
 
     
-    
     var body: some View {
         ZStack {
             SpriteView(scene: displayedScene)
@@ -16,7 +15,6 @@ struct ContentView: View {
             PauseButton(scene: displayedScene)
         }
     }
-}
 #Preview {
     ContentView(displayedScene: GameScene())
 }
