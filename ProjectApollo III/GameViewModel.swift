@@ -14,17 +14,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var enemy = SKSpriteNode()
     var dougPower = SKSpriteNode()
     var playerFire = SKSpriteNode()
-    var enimyFire = SKSpriteNode()
+    var enemyFire = SKSpriteNode()
     var fireTimer = Timer()
     var dougTimer = Timer()
     var enemyTimer = Timer()
     var enemyFireTimer = Timer()
+    var currentScore = 0
+    var currentScoreLabel = SKLabelNode()
     
     
     struct CBitmask{
         static let playerBody: UInt32 = 0b1
         static let playerAttack: UInt32 = 0b10
         static let enemyBody: UInt32 = 0b100
+        static let enemyAttack: UInt32 = 0b1000
         
     }
     
@@ -36,11 +39,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         background.zPosition = 1
         addChild(background)
         makePlayer(playerCh: 1)
-        //DougPowerz()
+        currentScoreLabel.text = "Score: \(currentScore)"
+        currentScoreLabel.fontName = "Chalkduster"
+        currentScoreLabel.fontSize = 40
+        currentScoreLabel.fontColor = .orange
+        currentScoreLabel.zPosition = 10
+        addChild(currentScoreLabel)
+        currentScoreLabel.position = CGPoint(x: size.width / 2, y: size.height / 1.3)
         enemyTimer = .scheduledTimer(timeInterval: 1, target: self, selector: #selector(makeEnemy), userInfo: nil, repeats: true)
         fireTimer = .scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(playerFireFunc), userInfo: nil, repeats: true)
         enemyFireTimer = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(enimyFireFunc), userInfo: nil, repeats: true)
-        //        dougTimer = .scheduledTimer(timeInterval: 20.0, invocation: NSInvocation, repeats: true)
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -62,6 +70,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func enemyDestroied(fire: SKSpriteNode, enemy: SKSpriteNode){
         fire.removeFromParent()
         enemy.removeFromParent()
+        
+        let explosion = SKEmitterNode(fileNamed: "EnemyExplosion ")
+        explosion?.position = enemy.position
+        explosion?.zPosition = 5
+        addChild(explosion!)
         
     }
     
@@ -95,13 +108,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let moveAction = SKAction.moveTo(y: -100, duration: 2.0)
         let deleteAction = SKAction.removeFromParent()
         let combine = SKAction.sequence([moveAction,deleteAction])
-        enimyFire = .init(imageNamed: "playerShot")
-        enimyFire.physicsBody = SKPhysicsBody(texture: enimyFire.texture!, size: enimyFire.texture!.size())
-        enimyFire.position = enemy.position
-        enimyFire.zPosition = 3
-        enimyFire.setScale(4.5)
-        addChild(enimyFire)
-        enimyFire.run(combine)
+        enemyFire = .init(imageNamed: "playerShot")
+        enemyFire.physicsBody = SKPhysicsBody(texture: enemyFire.texture!, size: enemyFire.texture!.size())
+        enemyFire.position = enemy.position
+        enemyFire.zPosition = 3
+        enemyFire.setScale(4.5)
+        enemyFire.physicsBody = SKPhysicsBody(rectangleOf: playerFire.size)
+        enemyFire.physicsBody?.affectedByGravity = false
+        enemyFire.physicsBody?.categoryBitMask = CBitmask.enemyAttack
+        enemyFire.physicsBody?.contactTestBitMask = CBitmask.playerBody
+        enemyFire.physicsBody?.collisionBitMask = CBitmask.playerBody
+        addChild(enemyFire)
+        enemyFire.run(combine)
     }
     
     @objc func makeEnemy() {
@@ -119,18 +137,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         enemy.physicsBody?.collisionBitMask = CBitmask.playerAttack | CBitmask.playerAttack
         addChild(enemy)
         enemy.run(combine)
-    }
-    
-    @objc func enemySpawnFunc() {
-        let moveAction = SKAction.moveTo(y: 1400, duration: 1)
-        let deleteAction = SKAction.removeFromParent()
-        let combine = SKAction.sequence([moveAction,deleteAction])
-        playerFire = .init(imageNamed: "playerShot")
-        playerFire.position = player.position
-        playerFire.zPosition = 3
-        playerFire.setScale(4.5)
-        addChild(playerFire)
-        playerFire.run(combine)
     }
     
     @objc func dougPowerSpawn() {
@@ -170,7 +176,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(player)
     }
     
-    func toggleTimers(isPaused: Bool) {
+    func toggleTimers() {
         if isPaused {
             fireTimer.invalidate()
             dougTimer.invalidate()
@@ -183,15 +189,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
     }
-    func didBeginContact(with contact: SKPhysicsContact) {
-        // Verifica se os objetos que entraram em contato são o jogador e o inimigo
-        if contact.bodyA.node == player && contact.bodyB.node == enemy {
-            // Faz com que os objetos sumirem
-            player.removeFromParent()
-            enemy.removeFromParent()
-        }
-    }
-    
     
     func randomPoint() -> Int {
         return Int.random(in: 50...1350)
