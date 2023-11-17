@@ -3,7 +3,11 @@ import SpriteKit
 
 
 // class GameState: ObservableObject {
-//     @Published var isPaused = false
+//     @Published var isPaused: Bool = false
+//
+//     init() {
+//             self.isPaused = false
+//         }
 // }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -80,9 +84,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch in touches {
-            let location = touch.location(in: self)
-            player.position.x = location.x
+        if !isPaused {
+            for touch in touches {
+                let location = touch.location(in: self)
+                player.position.x = location.x
+            }
         }
     }
     
@@ -123,6 +129,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     @objc func makeEnemy() {
+        if isPaused {
+            return
+        }
         let moveAction = SKAction.moveTo(y: -100, duration: 3)
         let deleteAction = SKAction.removeFromParent()
         let combine = SKAction.sequence([moveAction,deleteAction])
@@ -186,7 +195,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             enemyTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(makeEnemy), userInfo: nil, repeats: true)
             enemyFireTimer = Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(enimyFireFunc), userInfo: nil, repeats: true)
             fireTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(playerFireFunc), userInfo: nil, repeats: true)
-            
         }
     }
     

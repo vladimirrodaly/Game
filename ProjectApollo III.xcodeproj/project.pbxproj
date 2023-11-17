@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1DBD627B2B06CEA800A1B7B9 /* PauseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DBD627A2B06CEA800A1B7B9 /* PauseButton.swift */; };
 		1DF720C42AF1AE0400CEFE80 /* ProjectApollo_IIIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DF720C32AF1AE0400CEFE80 /* ProjectApollo_IIIApp.swift */; };
 		1DF720C62AF1AE0400CEFE80 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DF720C52AF1AE0400CEFE80 /* ContentView.swift */; };
 		1DF720C82AF1AE0500CEFE80 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DF720C72AF1AE0500CEFE80 /* Assets.xcassets */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1DBD627A2B06CEA800A1B7B9 /* PauseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PauseButton.swift; sourceTree = "<group>"; };
 		1DF720C02AF1AE0400CEFE80 /* ProjectApollo III.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ProjectApollo III.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF720C32AF1AE0400CEFE80 /* ProjectApollo_IIIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectApollo_IIIApp.swift; sourceTree = "<group>"; };
 		1DF720C52AF1AE0400CEFE80 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -36,6 +38,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1DBD62792B06CE9400A1B7B9 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				1DBD627A2B06CEA800A1B7B9 /* PauseButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		1DF720B72AF1AE0400CEFE80 = {
 			isa = PBXGroup;
 			children = (
@@ -55,6 +65,7 @@
 		1DF720C22AF1AE0400CEFE80 /* ProjectApollo III */ = {
 			isa = PBXGroup;
 			children = (
+				1DBD62792B06CE9400A1B7B9 /* Components */,
 				1DF720C32AF1AE0400CEFE80 /* ProjectApollo_IIIApp.swift */,
 				1DF720C52AF1AE0400CEFE80 /* ContentView.swift */,
 				645BD2192AFD878400DEFB84 /* GameViewModel.swift */,
@@ -146,6 +157,7 @@
 			files = (
 				645BD21A2AFD878400DEFB84 /* GameViewModel.swift in Sources */,
 				1DF720C62AF1AE0400CEFE80 /* ContentView.swift in Sources */,
+				1DBD627B2B06CEA800A1B7B9 /* PauseButton.swift in Sources */,
 				1DF720C42AF1AE0400CEFE80 /* ProjectApollo_IIIApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

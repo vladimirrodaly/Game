@@ -5,28 +5,16 @@ import SpriteKit
 
 
 struct ContentView: View {
-    //@StateObject private var gameState = GameState()
-    let scene = GameScene()
-    // @State var isPaused: Bool = false
+    @State var displayedScene = GameScene()
+
     
     var body: some View {
-        ZStack{
-            SpriteView(scene: scene)
+        ZStack {
+            SpriteView(scene: displayedScene)
                 .ignoresSafeArea()
-                        Button(action: {
-                            scene.isPaused.toggle()
-                            scene.toggleTimers()
-                        }) {
-                            Text("Pause Button")
-                                .foregroundColor(.white)
-                        }
-                        .padding(.top, -380)
-                        .padding(.leading, 250)
-                    }
+            PauseButton(scene: displayedScene)
         }
     }
-//}
 #Preview {
-    ContentView()
+    ContentView(displayedScene: GameScene())
 }
-
