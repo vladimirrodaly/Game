@@ -11,7 +11,7 @@ import SwiftUI
 struct ProjectApollo_IIIApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(displayedScene: GameScene())
         }
     }
 }
