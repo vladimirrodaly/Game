@@ -15,7 +15,7 @@ struct PauseButton: View {
     var body: some View {
         Button(action: {
             scene.isPaused.toggle()
-            scene.toggleTimers()
+            scene.togglePauseTimers()
         }) {
             Text("Pause Button")
                 .foregroundColor(.white)

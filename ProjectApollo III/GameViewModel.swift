@@ -27,7 +27,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var currentScoreLabel = SKLabelNode()
     
     
-    struct CBitmask{
+    struct CBitmask {
         static let playerBody: UInt32 = 0b1
         static let playerAttack: UInt32 = 0b10
         static let enemyBody: UInt32 = 0b100
@@ -114,7 +114,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let moveAction = SKAction.moveTo(y: -100, duration: 2.0)
         let deleteAction = SKAction.removeFromParent()
         let combine = SKAction.sequence([moveAction,deleteAction])
-        enemyFire = .init(imageNamed: "playerShot")
+        enemyFire = .init(imageNamed: "enimyShot")
         enemyFire.physicsBody = SKPhysicsBody(texture: enemyFire.texture!, size: enemyFire.texture!.size())
         enemyFire.position = enemy.position
         enemyFire.zPosition = 3
@@ -129,9 +129,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     @objc func makeEnemy() {
-        if isPaused {
-            return
-        }
         let moveAction = SKAction.moveTo(y: -100, duration: 3)
         let deleteAction = SKAction.removeFromParent()
         let combine = SKAction.sequence([moveAction,deleteAction])
@@ -185,7 +182,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(player)
     }
     
-    func toggleTimers() {
+    func togglePauseTimers() {
         if isPaused {
             fireTimer.invalidate()
             dougTimer.invalidate()

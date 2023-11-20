@@ -6,7 +6,7 @@ import SpriteKit
 
 struct ContentView: View {
     @State var displayedScene = GameScene()
-
+    
     
     var body: some View {
         ZStack {
@@ -15,6 +15,7 @@ struct ContentView: View {
             PauseButton(scene: displayedScene)
         }
     }
+}
 #Preview {
     ContentView(displayedScene: GameScene())
 }
