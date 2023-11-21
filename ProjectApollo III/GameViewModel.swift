@@ -2,14 +2,6 @@ import SpriteKit
 
 
 
-// class GameState: ObservableObject {
-//     @Published var isPaused: Bool = false
-//
-//     init() {
-//             self.isPaused = false
-//         }
-// }
-
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private var videoNode: SKVideoNode!
@@ -101,7 +93,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         playerFire.position = player.position
         playerFire.zPosition = 3
         playerFire.setScale(5.0)
-        playerFire.physicsBody = SKPhysicsBody(rectangleOf: playerFire.size)
+        playerFire.physicsBody = SKPhysicsBody(circleOfRadius: playerFire.size.width / 5)
         playerFire.physicsBody?.affectedByGravity = false
         playerFire.physicsBody?.categoryBitMask = CBitmask.playerAttack
         playerFire.physicsBody?.contactTestBitMask = CBitmask.enemyBody
@@ -115,11 +107,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let deleteAction = SKAction.removeFromParent()
         let combine = SKAction.sequence([moveAction,deleteAction])
         enemyFire = .init(imageNamed: "enimyShot")
-        enemyFire.physicsBody = SKPhysicsBody(texture: enemyFire.texture!, size: enemyFire.texture!.size())
+        enemyFire.physicsBody = SKPhysicsBody(circleOfRadius: enemyFire.size.width / 5)
         enemyFire.position = enemy.position
         enemyFire.zPosition = 3
         enemyFire.setScale(4.5)
-        enemyFire.physicsBody = SKPhysicsBody(rectangleOf: playerFire.size)
         enemyFire.physicsBody?.affectedByGravity = false
         enemyFire.physicsBody?.categoryBitMask = CBitmask.enemyAttack
         enemyFire.physicsBody?.contactTestBitMask = CBitmask.playerBody
@@ -133,10 +124,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let deleteAction = SKAction.removeFromParent()
         let combine = SKAction.sequence([moveAction,deleteAction])
         enemy = .init(imageNamed: "enemyShip1")
-        enemy.physicsBody = SKPhysicsBody(texture: enemy.texture!, size: enemy.texture!.size())
+        enemy.physicsBody = SKPhysicsBody(circleOfRadius: enemy.size.width / 5)
         enemy.position = CGPoint(x: randomPoint(), y: 1200)
         enemy.zPosition = 5
-        enemy.physicsBody = SKPhysicsBody(rectangleOf: enemy.size)
         enemy.physicsBody?.affectedByGravity = false
         enemy.physicsBody?.categoryBitMask = CBitmask.enemyBody
         enemy.physicsBody?.contactTestBitMask = CBitmask.playerBody | CBitmask.playerAttack
@@ -148,12 +138,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     @objc func dougPowerSpawn() {
         let moveAction = SKAction.moveTo(y: -100, duration: 5)
         let deleteAction = SKAction.removeFromParent()
+        let combine = SKAction.sequence([moveAction,deleteAction])
         dougPower = .init(imageNamed: "dougPower")
         dougPower.position = CGPoint(x: randomPoint() / 2, y: 1200)
         dougPower.zPosition = 11
         dougPower.setScale(0.20)
         addChild(dougPower)
-        dougPower.run(moveAction)
+        dougPower.run(combine)
     }
     
     func makePlayer(playerCh: Int) {
@@ -173,7 +164,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.position = CGPoint(x: size.width / 2, y: 120)
         player.zPosition = 10
         player.setScale(1.5)
-        player.physicsBody = SKPhysicsBody(rectangleOf: player.size)
+        player.physicsBody = SKPhysicsBody(circleOfRadius: player.size.width / 5)
         player.physicsBody?.affectedByGravity = false
         player.physicsBody?.isDynamic = true
         player.physicsBody?.categoryBitMask = CBitmask.playerBody
