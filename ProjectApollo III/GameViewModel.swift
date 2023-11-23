@@ -21,9 +21,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //var bossTimer = Timer()
     var currentScore = 0
     var currentScoreLabel = SKLabelNode()
-    var currentLives = [SKSpriteNode]()
+    var currentLives = 3
     var bossInScene: Int = 1
-    
     
     struct CBitmask {
         static let playerBody: UInt32 = 0b1
@@ -47,6 +46,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         currentScoreLabel.fontSize = 40
         currentScoreLabel.fontColor = .orange
         currentScoreLabel.zPosition = 10
+        displayLives(lives: currentLives)
         addChild(currentScoreLabel)
         currentScoreLabel.position = CGPoint(x: size.width / 2, y: size.height / 1.3)
         enemyTimer = .scheduledTimer(timeInterval: 1, target: self, selector: #selector(makeEnemy), userInfo: nil, repeats: true)
@@ -54,56 +54,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         enemyFireTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(enimyFireFunc), userInfo: nil, repeats: true)
         bossFireTimer = .scheduledTimer(timeInterval: 1, target: self, selector: #selector(bossFireFunc), userInfo: nil, repeats: true)
     }
-    
-    func didBegin(_ contact: SKPhysicsContact) {
-        let contact1 : SKPhysicsBody
-        let contact2 : SKPhysicsBody
-        
-        if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
-            contact1 = contact.bodyA
-            contact2 = contact.bodyB
-        } else {
-            contact1 = contact.bodyB
-            contact2 = contact.bodyA
-        }
-        
-        // Ataque do player atinge inimigo
-        if contact1.categoryBitMask == CBitmask.playerAttack && contact2.categoryBitMask == CBitmask.enemyBody {
-            enemyDestroied(fire: contact1.node as! SKSpriteNode, enemy: contact2.node as! SKSpriteNode)
-            updateScore()
-        }
-        // Ataques colidem
-        if contact1.categoryBitMask == CBitmask.playerAttack && contact2.categoryBitMask == CBitmask.enemyAttack {
-            attackCollision(enemy: contact2.node as! SKSpriteNode, self: contact1.node as! SKSpriteNode)
-        }
-        if contact1.categoryBitMask == CBitmask.playerAttack && contact2.categoryBitMask == CBitmask.bossAttack {
-            attackCollision(enemy: contact2.node as! SKSpriteNode, self: contact1.node as! SKSpriteNode)
-        }
-    }
-    
-    func enemyDestroied(fire: SKSpriteNode, enemy: SKSpriteNode){
-        fire.removeFromParent()
-        enemy.removeFromParent()
-        
-        let explosion = SKEmitterNode(fileNamed: "EnemyExplosion ")
-        explosion?.position = enemy.position
-        explosion?.zPosition = 5
-        explosion?.setScale(1)
-        addChild(explosion!)
-        
-    }
-    
-    func attackCollision(enemy: SKSpriteNode, self: SKSpriteNode){
-        enemy.removeFromParent()
-        self.removeFromParent()
-        
-        let explosion = SKEmitterNode(fileNamed: "EnemyExplosion ")
-        explosion?.position = enemy.position
-        explosion?.zPosition = 5
-        explosion?.setScale(1)
-        addChild(explosion!)
-    }
-    
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if !isPaused {
@@ -114,6 +64,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    @objc func bossFireFunc() {
+        let moveAction = SKAction.moveTo(y: -100, duration: 2.0)
+        let deleteAction = SKAction.removeFromParent()
+        let combine = SKAction.sequence([moveAction,deleteAction])
+        bossFire = .init(imageNamed: "bossShot")
+        bossFire.physicsBody = SKPhysicsBody(circleOfRadius: bossFire.size.width / 6)
+        bossFire.zPosition = 3
+        bossFire.setScale(4.5)
+        bossFire.position = CGPoint(x: boss.position.x - 20, y: boss.position.y - 30)
+        bossFire.physicsBody?.affectedByGravity = false
+        bossFire.physicsBody?.categoryBitMask = CBitmask.bossAttack
+        bossFire.physicsBody?.contactTestBitMask = CBitmask.playerBody | CBitmask.playerAttack
+        bossFire.physicsBody?.collisionBitMask = CBitmask.playerAttack
+        addChild(bossFire)
+        bossFire.run(combine)
+    }
     
     @objc func playerFireFunc() {
         let moveAction = SKAction.moveTo(y: 1400, duration: 1)
@@ -123,7 +89,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         playerFire.position = CGPoint(x: player.position.x, y: player.position.y + 30)
         playerFire.zPosition = 3
         playerFire.setScale(5.0)
-        playerFire.physicsBody = SKPhysicsBody(circleOfRadius: playerFire.size.width / 5)
+        playerFire.physicsBody = SKPhysicsBody(circleOfRadius: playerFire.size.width / 6)
         playerFire.physicsBody?.affectedByGravity = false
         playerFire.physicsBody?.categoryBitMask = CBitmask.playerAttack
         playerFire.physicsBody?.contactTestBitMask = CBitmask.enemyBody
@@ -137,7 +103,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let deleteAction = SKAction.removeFromParent()
         let combine = SKAction.sequence([moveAction,deleteAction])
         enemyFire = .init(imageNamed: "enimyShot")
-        enemyFire.physicsBody = SKPhysicsBody(circleOfRadius: enemyFire.size.width / 5)
+        enemyFire.physicsBody = SKPhysicsBody(circleOfRadius: enemyFire.size.width / 6)
         enemyFire.zPosition = 3
         enemyFire.setScale(4.5)
         enemyFire.position = CGPoint(x: enemy.position.x, y: enemy.position.y - 30)
@@ -149,12 +115,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         enemyFire.run(combine)
     }
     
+    @objc func makeBoss(score: Int) {
+        if score == 10 {
+            enemyTimer.invalidate()
+            enemyFireTimer.invalidate()
+            boss = .init(imageNamed: "bossShip")
+            boss.position = CGPoint(x: size.width / 2, y: 1200)
+            boss.zPosition = 10
+            boss.setScale(2.5)
+            boss.physicsBody = SKPhysicsBody(circleOfRadius: boss.size.width / 6)
+            boss.physicsBody?.affectedByGravity = false
+            boss.physicsBody?.categoryBitMask = CBitmask.bossBody
+            boss.physicsBody?.contactTestBitMask = CBitmask.playerAttack
+            boss.physicsBody?.collisionBitMask = CBitmask.playerAttack
+            addChild(boss)
+            let moveAction = SKAction.moveTo(y: 1000, duration: 5)
+            boss.run(moveAction)
+            bossInScene = 0
+        }
+    }
+    
     @objc func makeEnemy() {
         let moveAction = SKAction.moveTo(y: -100, duration: 3)
         let deleteAction = SKAction.removeFromParent()
         let combine = SKAction.sequence([moveAction,deleteAction])
         enemy = .init(imageNamed: "enemyShip1")
-        enemy.physicsBody = SKPhysicsBody(circleOfRadius: enemy.size.width / 5)
+        enemy.physicsBody = SKPhysicsBody(circleOfRadius: enemy.size.width / 6)
         enemy.position = CGPoint(x: randomPoint(), y: 1200)
         enemy.zPosition = 5
         enemy.physicsBody?.affectedByGravity = false
@@ -194,16 +180,79 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.position = CGPoint(x: size.width / 2, y: 120)
         player.zPosition = 10
         player.setScale(1.3)
-        player.physicsBody = SKPhysicsBody(circleOfRadius: player.size.width / 5)
+        player.physicsBody = SKPhysicsBody(circleOfRadius: player.size.width / 6)
         player.physicsBody?.affectedByGravity = false
         player.physicsBody?.isDynamic = true
         player.physicsBody?.categoryBitMask = CBitmask.playerBody
         player.physicsBody?.contactTestBitMask = CBitmask.enemyBody
         player.physicsBody?.collisionBitMask = CBitmask.enemyBody
         addChild(player)
-        
-        displayLives(lives: 3, shipName: shipName)
     }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        let contact1 : SKPhysicsBody
+        let contact2 : SKPhysicsBody
+        
+        if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
+            contact1 = contact.bodyA
+            contact2 = contact.bodyB
+        } else {
+            contact1 = contact.bodyB
+            contact2 = contact.bodyA
+        }
+        
+        // Ataque do player atinge inimigo
+        if contact1.categoryBitMask == CBitmask.playerAttack && contact2.categoryBitMask == CBitmask.enemyBody {
+            enemyDestroied(fire: contact1.node as! SKSpriteNode, enemy: contact2.node as! SKSpriteNode)
+            updateScore()
+        }
+        // Ataques colidem
+        if contact1.categoryBitMask == CBitmask.playerAttack && contact2.categoryBitMask == CBitmask.enemyAttack {
+            attackCollision(enemy: contact2.node as! SKSpriteNode, self: contact1.node as! SKSpriteNode)
+        }
+        if contact1.categoryBitMask == CBitmask.playerAttack && contact2.categoryBitMask == CBitmask.bossAttack {
+            attackCollision(enemy: contact2.node as! SKSpriteNode, self: contact1.node as! SKSpriteNode)
+        }
+        if contact1.categoryBitMask == CBitmask.playerBody && contact2.categoryBitMask == CBitmask.enemyAttack {
+            playerBodyCollision(enemy: contact2.node as! SKSpriteNode, self: contact1.node as! SKSpriteNode)
+            updateLives()
+            
+        }
+        if contact1.categoryBitMask == CBitmask.playerBody && contact2.categoryBitMask == CBitmask.bossAttack {
+            playerBodyCollision(enemy: contact2.node as! SKSpriteNode, self: contact1.node as! SKSpriteNode)
+            updateLives()
+        }
+    }
+    
+    func enemyDestroied(fire: SKSpriteNode, enemy: SKSpriteNode) {
+        fire.removeFromParent()
+        enemy.removeFromParent()
+        let explosion = SKEmitterNode(fileNamed: "EnemyExplosion ")
+        explosion?.position = enemy.position
+        explosion?.zPosition = 5
+        explosion?.setScale(1)
+        addChild(explosion!)
+    }
+    
+    func attackCollision(enemy: SKSpriteNode, self: SKSpriteNode) {
+        enemy.removeFromParent()
+        self.removeFromParent()
+        let explosion = SKEmitterNode(fileNamed: "EnemyExplosion ")
+        explosion?.position = enemy.position
+        explosion?.zPosition = 5
+        explosion?.setScale(1)
+        addChild(explosion!)
+    }
+    
+    func playerBodyCollision(enemy: SKSpriteNode, self: SKSpriteNode) {
+        enemy.removeFromParent()
+        let explosion = SKEmitterNode(fileNamed: "EnemyExplosion ")
+        explosion?.position = enemy.position
+        explosion?.zPosition = 5
+        explosion?.setScale(1)
+        addChild(explosion!)
+    }
+    
     
     func togglePauseTimers() {
         if isPaused {
@@ -229,58 +278,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         makeBoss(score: currentScore)
     }
     
-    func displayLives(lives: Int, shipName: String) {
-        for i in 1...lives {
-            let live = SKSpriteNode(imageNamed: shipName)
-            live.setScale(0.5)
-            live.position = CGPoint(x: CGFloat(i) * live.size.width * 0.75, y: size.height - live.size.height - 10)
+    func displayLives(lives: Int) {
+        if lives == 3 {
+            var live = SKSpriteNode(imageNamed: "3hearts.png")
+            live.setScale(0.6)
+            live.position = CGPoint(x: 130 , y: 1280)
             live.zPosition = 10
-            live.name = "Live\(live)"
-            currentLives.append(live)
+            addChild(live)
+        }
+        else if lives == 2 {
+            var live = SKSpriteNode(imageNamed: "2hearts.png")
+            live.setScale(0.6)
+            live.position = CGPoint(x: 130 , y: 1280)
+            live.zPosition = 10
+            addChild(live)
+        }
+        else if lives == 1 {
+            var live = SKSpriteNode(imageNamed: "1hearts.png")
+            live.setScale(0.6)
+            live.position = CGPoint(x: 130 , y: 1280)
+            live.zPosition = 10
             addChild(live)
         }
     }
-    
-    @objc func makeBoss(score: Int) {
-        if score == 3 {
-            enemyTimer.invalidate()
-            enemyFireTimer.invalidate()
-            
-            boss = .init(imageNamed: "bossShip")
-            boss.position = CGPoint(x: size.width / 2, y: 1200)
-            boss.zPosition = 10
-            boss.setScale(2.5)
-            boss.physicsBody = SKPhysicsBody(circleOfRadius: boss.size.width / 6)
-            boss.physicsBody?.affectedByGravity = false
-            boss.physicsBody?.categoryBitMask = CBitmask.bossBody
-            boss.physicsBody?.contactTestBitMask = CBitmask.playerAttack
-            boss.physicsBody?.collisionBitMask = CBitmask.playerAttack
-            addChild(boss)
-            
-            let moveAction = SKAction.moveTo(y: 1000, duration: 5)
-            boss.run(moveAction)
-            
-            bossInScene = 0
-
-        }
-        
-    }
-    
-    @objc func bossFireFunc() {
-        let moveAction = SKAction.moveTo(y: -100, duration: 2.0)
-        let deleteAction = SKAction.removeFromParent()
-        let combine = SKAction.sequence([moveAction,deleteAction])
-        
-        bossFire = .init(imageNamed: "bossShot")
-        bossFire.physicsBody = SKPhysicsBody(circleOfRadius: bossFire.size.width / 6)
-        bossFire.zPosition = 3
-        bossFire.setScale(4.5)
-        bossFire.position = CGPoint(x: boss.position.x - 20, y: boss.position.y - 30)
-        bossFire.physicsBody?.affectedByGravity = false
-        bossFire.physicsBody?.categoryBitMask = CBitmask.bossAttack
-        bossFire.physicsBody?.contactTestBitMask = CBitmask.playerBody | CBitmask.playerAttack
-        bossFire.physicsBody?.collisionBitMask = CBitmask.playerAttack
-        addChild(bossFire)
-        bossFire.run(combine)
+    func updateLives() {
+        currentLives -= 1
+        displayLives(lives: currentLives)
     }
 }

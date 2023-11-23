@@ -20,7 +20,7 @@ struct PauseButton: View {
             Text("Pause Button")
                 .foregroundColor(.white)
         }
-        .padding(.top, -380)
+        .padding(.top, -415)
         .padding(.leading, 250)
     }
 }
