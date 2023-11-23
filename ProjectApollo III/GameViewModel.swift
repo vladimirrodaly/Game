@@ -8,16 +8,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let background = SKSpriteNode(imageNamed: "nebula")
     var player = SKSpriteNode()
     var enemy = SKSpriteNode()
+    var boss = SKSpriteNode()
     var dougPower = SKSpriteNode()
     var playerFire = SKSpriteNode()
     var enemyFire = SKSpriteNode()
+    var bossFire = SKSpriteNode()
     var fireTimer = Timer()
     var dougTimer = Timer()
     var enemyTimer = Timer()
     var enemyFireTimer = Timer()
+    var bossFireTimer = Timer()
+    //var bossTimer = Timer()
     var currentScore = 0
     var currentScoreLabel = SKLabelNode()
     var currentLives = [SKSpriteNode]()
+    var bossInScene: Int = 1
     
     
     struct CBitmask {
@@ -25,7 +30,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         static let playerAttack: UInt32 = 0b10
         static let enemyBody: UInt32 = 0b100
         static let enemyAttack: UInt32 = 0b1000
-        
+        static let bossBody: UInt32 = 0b10000
+        static let bossAttack: UInt32 = 0b100000
     }
     
     override func didMove(to view: SKView) {
@@ -35,7 +41,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         background.setScale(1.5)
         background.zPosition = 1
         addChild(background)
-        makePlayer(playerCh: 3)
+        makePlayer(playerCh: 1)
         currentScoreLabel.text = "Score: \(currentScore)"
         currentScoreLabel.fontName = "Chalkduster"
         currentScoreLabel.fontSize = 40
@@ -46,6 +52,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         enemyTimer = .scheduledTimer(timeInterval: 1, target: self, selector: #selector(makeEnemy), userInfo: nil, repeats: true)
         fireTimer = .scheduledTimer(timeInterval: 1, target: self, selector: #selector(playerFireFunc), userInfo: nil, repeats: true)
         enemyFireTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(enimyFireFunc), userInfo: nil, repeats: true)
+        bossFireTimer = .scheduledTimer(timeInterval: 1, target: self, selector: #selector(bossFireFunc), userInfo: nil, repeats: true)
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -67,6 +74,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         // Ataques colidem
         if contact1.categoryBitMask == CBitmask.playerAttack && contact2.categoryBitMask == CBitmask.enemyAttack {
+            attackCollision(enemy: contact2.node as! SKSpriteNode, self: contact1.node as! SKSpriteNode)
+        }
+        if contact1.categoryBitMask == CBitmask.playerAttack && contact2.categoryBitMask == CBitmask.bossAttack {
             attackCollision(enemy: contact2.node as! SKSpriteNode, self: contact1.node as! SKSpriteNode)
         }
     }
@@ -215,6 +225,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func updateScore() {
         currentScore += 1
         currentScoreLabel.text = "Score: \(currentScore)"
+        
+        makeBoss(score: currentScore)
     }
     
     func displayLives(lives: Int, shipName: String) {
@@ -227,5 +239,48 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             currentLives.append(live)
             addChild(live)
         }
+    }
+    
+    @objc func makeBoss(score: Int) {
+        if score == 3 {
+            enemyTimer.invalidate()
+            enemyFireTimer.invalidate()
+            
+            boss = .init(imageNamed: "bossShip")
+            boss.position = CGPoint(x: size.width / 2, y: 1200)
+            boss.zPosition = 10
+            boss.setScale(2.5)
+            boss.physicsBody = SKPhysicsBody(circleOfRadius: boss.size.width / 6)
+            boss.physicsBody?.affectedByGravity = false
+            boss.physicsBody?.categoryBitMask = CBitmask.bossBody
+            boss.physicsBody?.contactTestBitMask = CBitmask.playerAttack
+            boss.physicsBody?.collisionBitMask = CBitmask.playerAttack
+            addChild(boss)
+            
+            let moveAction = SKAction.moveTo(y: 1000, duration: 5)
+            boss.run(moveAction)
+            
+            bossInScene = 0
+
+        }
+        
+    }
+    
+    @objc func bossFireFunc() {
+        let moveAction = SKAction.moveTo(y: -100, duration: 2.0)
+        let deleteAction = SKAction.removeFromParent()
+        let combine = SKAction.sequence([moveAction,deleteAction])
+        
+        bossFire = .init(imageNamed: "bossShot")
+        bossFire.physicsBody = SKPhysicsBody(circleOfRadius: bossFire.size.width / 6)
+        bossFire.zPosition = 3
+        bossFire.setScale(4.5)
+        bossFire.position = CGPoint(x: boss.position.x - 20, y: boss.position.y - 30)
+        bossFire.physicsBody?.affectedByGravity = false
+        bossFire.physicsBody?.categoryBitMask = CBitmask.bossAttack
+        bossFire.physicsBody?.contactTestBitMask = CBitmask.playerBody | CBitmask.playerAttack
+        bossFire.physicsBody?.collisionBitMask = CBitmask.playerAttack
+        addChild(bossFire)
+        bossFire.run(combine)
     }
 }
