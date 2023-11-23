@@ -17,7 +17,6 @@ struct ContentView: View {
     }
 }
 
-
 #Preview {
     ContentView(displayedScene: GameScene())
 }
