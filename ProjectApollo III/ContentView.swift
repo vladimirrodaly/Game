@@ -5,14 +5,27 @@ import SpriteKit
 
 
 struct ContentView: View {
-    @State var displayedScene = GameScene()
+    @ObservedObject var displayedScene = GameScene()
     
     
     var body: some View {
-        ZStack {
-            SpriteView(scene: displayedScene)
-                .ignoresSafeArea()
-            PauseButton(scene: displayedScene)
+        NavigationStack {
+            HStack {
+                ZStack {
+                    SpriteView(scene: displayedScene)
+                        .ignoresSafeArea()
+                    PauseButton(scene: displayedScene)
+                    
+                    if displayedScene.isRunning == false {
+                        NavigationLink {
+                            ContentView().navigationBarHidden(true)
+                                .navigationBarBackButtonHidden(true)
+                        } label: {
+                            Text("Reiniciar o jogo")
+                        }
+                    }
+                }
+            }
         }
     }
 }
